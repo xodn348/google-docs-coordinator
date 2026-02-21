@@ -154,6 +154,5 @@ MIT - Copyright (c) 2026 Social Sense Team (Junhyuk Lee, Jobin Varughese, Kyle M
 
 ## Acknowledgments
 
-- Built with assistance from AI tools (Claude Code by Anthropic)
 - Developed for CSCE672 (CSCW) at Texas A&M University
 - Original work for academic purposes
