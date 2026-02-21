@@ -1,240 +1,159 @@
 # Google Docs Collaboration Coordinator
 
-AI-powered CLI tool that analyzes Google Docs collaboration data to generate coordination snapshots.
+AI-powered tool that analyzes Google Docs collaboration and surfaces **open questions**, **decisions**, and **next steps** for your team.
 
-**Course Project**: CSCE672 (Computer Supported Collaborative Work) - Spring 2026, Texas A&M University  
+Available as both a **CLI tool** and a **Chrome Extension** with a local API server.
+
+**Course**: CSCE672 (CSCW) - Spring 2026, Texas A&M University
 **Team**: Social Sense (Junhyuk Lee, Jobin Varughese, Kyle Moore)
-
-## Overview
-
-This tool analyzes Google Docs collaboration patterns by examining:
-- **Comments**: Threaded discussions, unresolved questions, resolved decisions
-- **Activity**: Document revisions and editing patterns over time
-- **Metadata**: Document details and contributor information
-
-**Output**: Markdown snapshots with AI-extracted insights:
-- 🔴 Open questions requiring team attention
-- ✅ Decisions made during collaboration
-- ➡️ Suggested next steps for the team
-
-**Why it's useful**: Helps distributed teams track what's been decided, what's still open, and what needs to happen next—especially valuable for asynchronous collaboration on shared documents.
 
 ## Features
 
-- 📊 Fetches comments, revisions, and metadata from Google Docs API
-- 🤖 AI-powered analysis using OpenAI GPT-4
-- ⚡ Smart caching with 5-minute TTL for faster repeated queries
-- 🛡️ Partial failure handling—continues with available data if some API calls fail
-- 📝 Markdown output with priority badges (🔴 high, 🟡 medium, 🟢 low)
-- 🔒 Secure OAuth 2.0 authentication with local token storage
+- **Open Questions** - Extracts unresolved questions from comments (priority-ranked)
+- **Decisions** - Identifies agreements and resolutions from discussions
+- **Next Steps** - Suggests actionable tasks based on activity and open threads
+- **Chrome Extension** - Popup sidebar on any Google Docs page, one-click analysis
+- **CLI Mode** - Terminal output + Markdown file export
+- **Smart Caching** - 5-minute TTL so repeated queries are fast
+- **Partial Failure Handling** - Continues with available data if some API calls fail
 
 ## Prerequisites
 
-- **Python 3.12+**
-- **Google Cloud Project** with:
-  - Google Docs API enabled
-  - Google Drive API enabled
-  - OAuth 2.0 credentials (Desktop app)
-- **OpenAI API key** with access to GPT-4 models
+- Python 3.12+
+- [Google Cloud Project](https://console.cloud.google.com) with **Docs API** + **Drive API** enabled, OAuth 2.0 credentials (Desktop app)
+- [OpenAI API key](https://platform.openai.com/api-keys)
 
-## Google Cloud Setup
-
-1. **Create a Google Cloud Project**:
-   - Go to [Google Cloud Console](https://console.cloud.google.com)
-   - Create a new project or select an existing one
-
-2. **Enable Required APIs**:
-   - Navigate to "APIs & Services" > "Library"
-   - Search for and enable:
-     - **Google Docs API**
-     - **Google Drive API**
-
-3. **Create OAuth 2.0 Credentials**:
-   - Go to "APIs & Services" > "Credentials"
-   - Click "Create Credentials" > "OAuth client ID"
-   - Select "Desktop app" as the application type
-   - Download the credentials JSON file
-
-4. **Save Credentials**:
-   ```bash
-   mkdir -p credentials
-   mv ~/Downloads/client_secret_*.json credentials/credentials.json
-   ```
-
-## Installation
+## Setup
 
 ```bash
-# Clone repository
-git clone https://github.com/YOUR_USERNAME/google-docs-coordinator.git
+git clone https://github.com/xodn348/google-docs-coordinator.git
 cd google-docs-coordinator
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
 ```
 
-## Usage
+Create `.env`:
+```
+OPENAI_API_KEY=sk-your-key-here
+OPENAI_MODEL=gpt-4o-mini
+```
 
-### Basic Usage
+Place Google OAuth credentials at `credentials/credentials.json`.
+On first run, a browser window opens for Google auth. After that, `credentials/token.json` is cached.
+
+## Quick Start
+
+### Option A: Chrome Extension (Recommended)
+
+**1. Start the local server:**
+```bash
+python -m src --serve
+```
+Server runs at `http://localhost:8000`. Keep this terminal open.
+
+**2. Install the extension:**
+- Open `chrome://extensions`
+- Enable **Developer mode** (top right)
+- Click **Load unpacked** → select the `extension/` folder
+
+**3. Use it:**
+- Open any Google Doc
+- Click the extension icon in Chrome toolbar
+- Set look-back hours (default: 48)
+- Click **Analyze**
+
+### Option B: CLI
 
 ```bash
-python src/main.py <GOOGLE_DOC_ID>
+# Basic
+python -m src <DOC_ID>
+
+# Custom look-back period + bypass cache
+python -m src <DOC_ID> --since-hours 720 --force-refresh
+
+# Custom output directory
+python -m src <DOC_ID> --output-dir snapshots
 ```
 
-### With Options
-
-```bash
-# Force refresh (bypass cache)
-python src/main.py <DOC_ID> --force-refresh
-
-# Analyze last 72 hours of activity
-python src/main.py <DOC_ID> --since-hours 72
-
-# Save to custom directory
-python src/main.py <DOC_ID> --output-dir snapshots
-```
-
-### Command-Line Arguments
-
-| Argument | Required | Description | Default |
-|----------|----------|-------------|---------|
-| `document_id` | Yes | Google Doc ID (from document URL) | - |
-| `--force-refresh` | No | Bypass cache and fetch fresh data | `False` |
-| `--since-hours` | No | Hours to look back for activity | `48` |
-| `--output-dir` | No | Directory to save snapshot files | `output` |
-
-### Finding the Document ID
-
-Google Doc URLs have this format:
+**Finding the Document ID:**
 ```
 https://docs.google.com/document/d/1ABC123XYZ456/edit
                                    ^^^^^^^^^^^^
-                                   Document ID
+                                   This part
 ```
 
-Copy the part between `/d/` and `/edit`.
+### CLI Arguments
 
-## Output Format
+| Argument | Description | Default |
+|----------|-------------|---------|
+| `document_id` | Google Doc ID from URL | required |
+| `--serve` | Start API server mode | - |
+| `--port` | Server port | `8000` |
+| `--since-hours` | Hours to look back | `48` |
+| `--force-refresh` | Bypass cache | `false` |
+| `--output-dir` | Snapshot save directory | `output` |
 
-The tool generates Markdown files with the following structure:
+## API
 
-```markdown
-# Coordination Snapshot: [Document Title]
+When running with `--serve`, one endpoint is available:
 
-**Document ID**: 1ABC123XYZ  
-**Generated**: 2026-02-20 15:30:00 UTC
+```
+POST /api/analyze
+Content-Type: application/json
 
-## Contributors (3)
-- Alice Smith
-- Bob Johnson
-- Carol Lee
-
-## Open Questions (2)
-
-### 🔴 HIGH: Budget allocation unclear
-[AI-extracted question with context from comments]
-
-### 🟡 MEDIUM: Timeline needs clarification
-[Question details...]
-
-## Decisions Made (1)
-
-### We will use React for the frontend
-[AI-extracted decision with reasoning]
-
-## Next Steps (3)
-
-### 🔴 HIGH: Finalize budget by Friday
-[AI-suggested action item]
-
-## Data Completeness
-✅ Comments: Available  
-✅ Revisions: Available  
-✅ Metadata: Available  
-⚠️ Errors: 0 warnings
+{
+  "doc_id": "1ABC123XYZ456",
+  "since_hours": 48,
+  "force_refresh": false
+}
 ```
 
-Snapshot files are saved as: `output/snapshot_YYYYMMDD_HHMMSS.md`
+Returns a `CoordinationSnapshot` JSON with `questions`, `decisions`, `next_steps`, `contributors`, and `data_completeness`.
+
+Health check: `GET /health`
 
 ## Architecture
 
-**Models**:
-- `google_models.py` - Google API response schemas (User, Comment, Revision, DocumentMetadata)
-- `coordination_models.py` - Output schemas (Question, Decision, NextStep, CoordinationSnapshot)
+```
+src/
+  main.py           CLI entry point (argparse + --serve flag)
+  server.py         FastAPI server (POST /api/analyze)
+  config.py         Pydantic Settings (.env)
+  prompts.py        AI system/user prompt templates
+  formatter.py      Markdown output generation
+  utils.py          OAuth2, logging, Google API service builders
+  models/
+    google_models.py        Google API schemas (User, Comment, Revision, DocumentMetadata)
+    coordination_models.py  Output schemas (Question, Decision, NextStep, CoordinationSnapshot)
+  services/
+    google_client.py  Google Docs/Drive API client with caching + retry
+    ai_analyzer.py    OpenAI structured output (GPT-4o-mini)
+    coordinator.py    Pipeline orchestration (fetch → analyze → snapshot)
 
-**Services**:
-- `GoogleDocsClient` - Google API wrapper with caching and retry logic
-- `AIAnalyzer` - OpenAI integration with structured output parsing
-- `Coordinator` - Pipeline orchestration
+extension/
+  manifest.json   Chrome Extension Manifest V3
+  popup.html/js   Popup UI
+  content.js      Doc ID extraction from Google Docs URL
+  styles.css      Popup styling
 
-**Utilities**:
-- `utils.py` - OAuth authentication and logging setup
-- `prompts.py` - AI prompt templates
-- `formatter.py` - Markdown output generation
-- `config.py` - Environment configuration (Pydantic Settings)
-
-**Entry Point**:
-- `main.py` - CLI interface with argparse
+tests/            55 unit tests
+```
 
 ## Troubleshooting
 
-### "credentials.json not found"
-**Solution**: Download OAuth credentials from Google Cloud Console and save to `credentials/credentials.json`
-
-### "Invalid credentials" or "Token has been expired or revoked"
-**Solution**: Delete `credentials/token.json` and re-run the tool. You'll be prompted to re-authenticate.
-
-### "API has not been used in project before or it is disabled"
-**Solution**: Enable Google Docs API and Google Drive API in Google Cloud Console
-
-### "OpenAI API error" or "Invalid API key"
-**Solution**: Check that `OPENAI_API_KEY` is correctly set in your `.env` file
-
-### Permission errors when saving snapshots
-**Solution**: Ensure the `output` directory exists and you have write permissions
-
-## Security Notes
-
-- **Credentials**: Never commit `credentials/credentials.json` or `credentials/token.json` to version control
-- **API Keys**: Keep `.env` file secure and never commit it to git
-- **Token Storage**: OAuth tokens are stored locally with `0600` permissions (owner read/write only)
-- `.gitignore` is configured to exclude all sensitive files
+| Error | Fix |
+|-------|-----|
+| `credentials.json not found` | Download OAuth credentials from Google Cloud Console → `credentials/credentials.json` |
+| `Token has been expired or revoked` | Delete `credentials/token.json`, re-run to re-authenticate |
+| `API has not been used in project` | Enable Google Docs API + Drive API in Cloud Console |
+| `OpenAI API error` | Check `OPENAI_API_KEY` in `.env` |
+| Extension shows "Cannot reach local server" | Make sure `python -m src --serve` is running |
 
 ## License
 
-MIT License - See [LICENSE](LICENSE) file
-
-Copyright (c) 2026 Social Sense Team (Junhyuk Lee, Jobin Varughese, Kyle Moore)
+MIT - Copyright (c) 2026 Social Sense Team (Junhyuk Lee, Jobin Varughese, Kyle Moore)
 
 ## Acknowledgments
 
-- This project was built with assistance from AI tools (Claude Code by Anthropic)
-- Developed as coursework for CSCE672 (Computer Supported Collaborative Work) at Texas A&M University
-- This is original work created for academic purposes—NOT copied from existing open source projects
-- External dependencies are properly attributed in `requirements.txt`
-
-## Contributing
-
-This is an academic project. For team members:
-1. Create a feature branch from `main`
-2. Make your changes with clear commit messages
-3. Test your changes locally
-4. Submit a pull request for review
-
-## Development
-
-```bash
-# Run with verbose logging
-python src/main.py <DOC_ID> --force-refresh
-
-# Check for missing dependencies
-pip install -r requirements.txt
-
-# Verify credentials setup
-ls -la credentials/
-```
-
-For questions or issues, contact the team members listed above.
+- Built with assistance from AI tools (Claude Code by Anthropic)
+- Developed for CSCE672 (CSCW) at Texas A&M University
+- Original work for academic purposes

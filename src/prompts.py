@@ -21,15 +21,18 @@ Extract THREE types of information:
    - Only include if there's clear resolution, not ongoing debate
    - Note who made/agreed to the decision
 
-3. **NEXT STEPS** - Actionable tasks to move forward
-   - Base on: unresolved questions, activity gaps, empty sections
-   - Assign to specific people when mentioned in comments
-   - Prioritize by blocking/critical nature
-   - Provide brief rationale
+3. **NEXT STEPS** - Actionable tasks the team should do next
+   - ALWAYS generate at least 1-2 next steps based on available data
+   - Suggest steps to resolve any open questions
+   - Suggest follow-ups if activity is low or one-sided
+   - If comments mention tasks, deadlines, or responsibilities, extract them
+   - Assign to specific people when mentioned
+   - Prioritize by urgency and blocking nature
+   - Provide brief rationale for each step
 
-IMPORTANT:
-- Only extract EXPLICIT items visible in the data
-- Do NOT speculate or infer beyond what's stated
+RULES:
+- For QUESTIONS and DECISIONS: only extract items explicitly visible in the data
+- For NEXT STEPS: infer reasonable action items from the context (open questions, activity patterns, stalled discussions)
 - Be concise and actionable
 - When uncertain about priority, default to "medium"
 """
