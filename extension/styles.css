@@ -1,0 +1,203 @@
+/* ============================================================
+   Google Docs Coordinator — Popup Styles
+   ============================================================ */
+
+:root {
+  --bg: #ffffff;
+  --surface: #f8f9fa;
+  --border: #dadce0;
+  --text: #202124;
+  --text-secondary: #5f6368;
+  --primary: #1a73e8;
+  --primary-hover: #1765cc;
+  --error: #d93025;
+  --info: #1a73e8;
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Google Sans", "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  width: 380px;
+  min-height: 200px;
+  padding: 16px;
+}
+
+/* ---------- Header ---------- */
+
+header {
+  margin-bottom: 12px;
+}
+
+header h1 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ---------- Controls ---------- */
+
+#controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.field label {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.field input {
+  width: 80px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  outline: none;
+}
+
+.field input:focus {
+  border-color: var(--primary);
+}
+
+#analyzeBtn {
+  flex: 1;
+  padding: 8px 16px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#analyzeBtn:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+#analyzeBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Status ---------- */
+
+#status {
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.status-info {
+  background: #e8f0fe;
+  color: var(--info);
+}
+
+.status-error {
+  background: #fce8e6;
+  color: var(--error);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---------- Results ---------- */
+
+main section {
+  margin-bottom: 14px;
+}
+
+h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.status-list {
+  list-style: none;
+  font-size: 12px;
+}
+
+.status-list li {
+  padding: 2px 0;
+}
+
+.errors {
+  color: var(--error);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ---------- Cards ---------- */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.card h3 {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.card .meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.card .context {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.empty {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 12px;
+}
+
+/* ---------- Lists ---------- */
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul li {
+  padding: 2px 0;
+  font-size: 12px;
+}

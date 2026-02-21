@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docs Coordinator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Docs Coordinator</h1>
+    <p class="subtitle">AI-powered collaboration analysis</p>
+  </header>
+
+
+  <section id="controls">
+    <div class="field">
+      <label for="sinceHours">Look-back (hours)</label>
+      <input type="number" id="sinceHours" value="48" min="1" max="8760" />
+    </div>
+    <button id="analyzeBtn">Analyze</button>
+  </section>
+
+
+  <div id="status" class="hidden"></div>
+
+
+  <main id="results" class="hidden">
+
+    <section id="dataStatus"></section>
+
+
+    <section id="contributors"></section>
+
+
+    <section id="questions"></section>
+
+
+    <section id="decisions"></section>
+
+
+    <section id="nextSteps"></section>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>

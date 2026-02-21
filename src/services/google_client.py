@@ -2,7 +2,7 @@ import os
 import time
 import logging
 from typing import Optional, Any
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from googleapiclient.errors import HttpError
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
@@ -153,7 +153,7 @@ class GoogleDocsClient:
             raw_revisions = self._fetch_revisions_api(doc_id)
 
             # Filter by time
-            cutoff = datetime.now() - timedelta(hours=since_hours)
+            cutoff = datetime.now(timezone.utc) - timedelta(hours=since_hours)
             recent = []
             for r in raw_revisions:
                 mod_time = datetime.fromisoformat(

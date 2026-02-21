@@ -59,7 +59,7 @@ class Coordinator:
         # Clear cache if force_refresh
         if force_refresh:
             self.logger.info("Force refresh enabled, clearing cache")
-            self.google_client.cache.clear()
+            self.google_client._cache.clear()
 
         # Fetch all data from Google Docs
         self.logger.info("Fetching data from Google Docs API")

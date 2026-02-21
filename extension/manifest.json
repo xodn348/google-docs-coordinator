@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Google Docs Coordinator",
+  "version": "1.0.0",
+  "description": "AI-powered collaboration analysis for Google Docs — surfaces open questions, decisions, and next steps.",
+  "permissions": ["activeTab"],
+  "host_permissions": [
+    "https://docs.google.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://docs.google.com/document/d/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
