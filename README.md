@@ -17,6 +17,18 @@ Available as both a **CLI tool** and a **Chrome Extension** with a local API ser
 - **Smart Caching** - 5-minute TTL so repeated queries are fast
 - **Partial Failure Handling** - Continues with available data if some API calls fail
 
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Language | Python 3.12 |
+| AI | OpenAI GPT-4o-mini (structured output) |
+| Backend | FastAPI + Uvicorn |
+| Google API | google-api-python-client, OAuth 2.0 |
+| Data Validation | Pydantic v2 |
+| Frontend | Chrome Extension (Manifest V3), vanilla JS |
+| Testing | pytest (55 tests) |
+
 ## Prerequisites
 
 - Python 3.12+
